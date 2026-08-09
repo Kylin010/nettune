@@ -1512,7 +1512,8 @@ banner(){
 # 执行阶段的日志用英文（都是参数名和数值, 中英混排反而看不清）, 结论用中文.
 wizard(){
   WIZARD=1
-  local ram; ram=$(detect_ram_mb)
+  local ram rate="" knee="" margin=""
+  ram=$(detect_ram_mb)
   echo
   echo "  ── 一键调优 ──"
   echo
