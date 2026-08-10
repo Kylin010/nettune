@@ -222,14 +222,15 @@ probe_peer_port(){  # probe_peer_port <主机>  -> 成功则 PROBE_PORT_OK=端�
 
 # 本机有没有可用的 IPv4 出网能力. 纯 v6 机器要自动走 v6, 不能傻等 v4 超时.
 have_ipv4(){
-  ip -4 route show default 2>/dev/null | grep -q . || return 1
-  ip -4 addr show scope global 2>/dev/null | grep -q 'inet ' || return 1
+  # 不接 grep -q：pipefail 下多地址输出会让 ip 在 grep 提前退出后收到 SIGPIPE, 反而误判为失败.
+  [ -n "$(ip -4 route show default 2>/dev/null)" ] || return 1
+  [ -n "$(ip -4 addr show scope global 2>/dev/null)" ] || return 1
 }
 
 # 本机有没有可用的 IPv6 出网能力. 光有地址不算 —— 很多机器配了 v6 地址但没路由.
 have_ipv6(){
-  ip -6 route show default 2>/dev/null | grep -q . || return 1
-  ip -6 addr show scope global 2>/dev/null | grep -q 'inet6' || return 1
+  [ -n "$(ip -6 route show default 2>/dev/null)" ] || return 1
+  [ -n "$(ip -6 addr show scope global 2>/dev/null)" ] || return 1
 }
 
 PEER_PORT="${PEER_PORT:-5201}"   # 选定对端时确定的可用端口
